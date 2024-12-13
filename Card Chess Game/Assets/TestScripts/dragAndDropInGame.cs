@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class dragAndDropInGame : MonoBehaviour
+public class DragAndDropInGame : MonoBehaviour
 {
     private float firstPosX;
     private float firstPosY;

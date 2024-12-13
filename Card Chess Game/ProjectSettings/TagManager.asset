@@ -41,3 +41,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Clickable
+    uniqueID: 3012815089
+    locked: 0

@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 175488896}
   - component: {fileID: 175488898}
   m_Layer: 5
-  m_Name: Hands
+  m_Name: Hand_P1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -846,7 +846,7 @@ GameObject:
   - component: {fileID: 1663658694}
   - component: {fileID: 1663658693}
   m_Layer: 5
-  m_Name: Deck_Player2
+  m_Name: Deck_P2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1030,7 +1030,7 @@ GameObject:
   - component: {fileID: 1717609510}
   - component: {fileID: 1717609509}
   m_Layer: 5
-  m_Name: Hands_Opponent
+  m_Name: Hand_P2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1552,7 +1552,7 @@ GameObject:
   - component: {fileID: 2030669692}
   - component: {fileID: 2030669691}
   m_Layer: 5
-  m_Name: Deck_Player1
+  m_Name: Deck_P1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

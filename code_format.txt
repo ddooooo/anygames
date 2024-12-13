@@ -1,0 +1,28 @@
+1. variables: snake_case
+2. functions: camelCase
+3. Unity editor gameobject name: PascalCase
+4. Card Name: Pascal_Snake_Case
+5. Class Name: PascalCase
+6. Prefab Name: Paskal_Snake_Case
+7. Enum: Pascal_Snake_Case
+8. Folder: Pascal_Snake_Case
+
+
+x, y or y, x
+need to make a decision 
+
+*go for y, x
+
+
+
+delete hand and create it over again design pattern
+
+error overchecking design paradigm 
+
+event driven gameobject creation pattern 
+
+
+1. event driven design pattern
+2. removeAll and GenerateAll design pattern
+
+add constructor-like initializer function 

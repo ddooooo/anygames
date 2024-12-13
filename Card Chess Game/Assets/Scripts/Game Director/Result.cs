@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using Config; 
 public class Result : MonoBehaviour
 {
     [SerializeField] Text player1;
@@ -16,7 +16,6 @@ public class Result : MonoBehaviour
     [SerializeField] private float delay = 10.0f;
     //[SerializeField] private string sceneToLoad;
     private float timeElapsed;
-    int playerResult = 0;
     void Start()
     {
 
@@ -24,34 +23,19 @@ public class Result : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        wheelScript = FindObjectOfType<WheelController>();
         if(wheelScript.finish()) {
-            resultImage.enabled = true;
-            if(wheelScript.result() == 1 ) {
-                result.text = "Tail";
-            }else {
-                result.text = "Head";
-            }
-
+            resultImage.gameObject.SetActive(true);
+            result.text = (wheelScript.result() == (int) Constants.P1_First) ? "P1 First!" : "P2 First!"; 
             timeElapsed += Time.deltaTime;
             if(timeElapsed > delay) {
-                int current = SceneManager.GetActiveScene().buildIndex;
-                if(player1.text == result.text) {
-                    playerResult = 1;
-                    //SceneManager.LoadScene(current+1);
-                }else {
-                    playerResult = 0;
-                    //SceneManager.LoadScene(current+2);
-                }
-                SceneManager.LoadScene("Choose Card Scene");
+                PlayerPrefs.SetInt("result", (int) wheelScript.result());
+                PlayerPrefs.SetInt("player", 1);
+                loadNextScene(); 
             }
         }
     }
-
-    void OnDisable() {
-        PlayerPrefs.SetInt("result", playerResult);
-    }
-    public Text getResult() {
-        return result;
+    private void loadNextScene() {
+        int current = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(current+1);
     }
 }

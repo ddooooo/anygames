@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class boxController : MonoBehaviour
+public class BoxController : MonoBehaviour
 {
     public Sprite trashcan_close;
     public Sprite trashcan_open;

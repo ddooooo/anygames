@@ -20,11 +20,4 @@ public class sceneLoader : MonoBehaviour
         int current = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(current+1);
     }
-
-    public void loadInGameScene() {
-
-        SceneManager.LoadScene("InGame Scene"); 
-    }
-
-    
 }

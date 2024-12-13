@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEditor;
+using Config; 
 
 // Create every pieces on the chess board
 public class BoardManager : MonoBehaviour
 {
-    GameObject cellPrefab;
     GameObject piecePrefab;
     Color cell_Brown;
     Color cell_Dark_Brown;
@@ -21,67 +21,66 @@ public class BoardManager : MonoBehaviour
 
         
         // Create a board with cell prefab
-        int xpos = 0;
-        Object prefab_board_cell = AssetDatabase.LoadAssetAtPath(cardSave.board_cell_path, typeof(GameObject));
-        for(int x = -2; x <= 2; x++){
-            int ypos = 0;
-            for(int y = -3; y <= 4; y++) {
-                cellPrefab = Instantiate(prefab_board_cell) as GameObject;
-                cellPrefab.name = ("Cell(x, y): "+ xpos + " " + ypos);
-                cellPrefab.transform.position = new Vector2( 150*x, (150*y) - 75 );
-                cellPrefab.transform.SetParent(gameObject.transform, false);
-                cellPrefab.GetComponent<cellController>().indexX = xpos;
-                cellPrefab.GetComponent<cellController>().indexY = ypos;
-                cardSave.cells[xpos, ypos] = cellPrefab;
+        int ypos = 0;
+        for(int y = -3; y <= 4; y++){
+            int xpos = 0;
+            for(int x = -2; x <= 2; x++) {
+                GameObject prefab_board_cell = Helper.prefabNameToGameObject(Prefab.Cell.ToString()); 
+                prefab_board_cell.name = ("Cell(x, y): "+ xpos + " " + ypos);
+                prefab_board_cell.transform.position = new Vector2( 150 * x, 150 * y - 75 );
+                prefab_board_cell.transform.SetParent(gameObject.transform, false);
+                prefab_board_cell.GetComponent<CellController>().indexX = xpos;
+                prefab_board_cell.GetComponent<CellController>().indexY = ypos;
+                PieceConfig.cells[ypos, xpos] = prefab_board_cell;
                 if((x + y + 5) % 2 == 0) {
-                    cellPrefab.GetComponent<Image>().color =  cell_Brown; //Color.black;
+                    prefab_board_cell.GetComponent<Image>().color =  cell_Brown; //Color.black;
                 } else {
-                    cellPrefab.GetComponent<Image>().color =  cell_Dark_Brown; //Color.white;
+                    prefab_board_cell.GetComponent<Image>().color =  cell_Dark_Brown; //Color.white;
                 }
-                ypos++;
+                xpos++;
             }
-            xpos++;
+            ypos++;
         }
 
         // Create a ChessPiece for player1, player2
         for(int i=0; i<2; i++) {
             for(int j = 0; j < 5; j++) {
-
+                Piece type = PieceConfig.pieces_on_board[i, j]; 
                 //Chesspiece for player1
-                Object prefabPiece = AssetDatabase.LoadAssetAtPath(cardSave.piece[(int) cardSave.pieces[i,j]], typeof(GameObject)); // Get Location of the prefab to create a prefab
-                GameObject piece = GameObject.Instantiate(prefabPiece) as GameObject;; // Instantiate prefab
-                piece.transform.SetParent(cardSave.cells[j, i].transform);
-                piece.transform.position = cardSave.cells[j, i].transform.position;
+                GameObject piece = Helper.prefabNameToGameObject(type.ToString()); 
+                piece.transform.SetParent(PieceConfig.cells[i, j].transform);
+                piece.transform.position = PieceConfig.cells[i, j].transform.position;
                 piece.GetComponent<ChessPiece>().player = 1;
-                piece.GetComponent<ChessPiece>().chessPieceType = cardSave.pieces[i,j];
+                piece.GetComponent<ChessPiece>().chessPieceType = type; 
                 piece.GetComponent<ChessPiece>().indexX = j;
                 piece.GetComponent<ChessPiece>().indexY = i;
-                addPiece(piece, cardSave.pieces[i,j], 1);
+                piece.GetComponent<Outline>().enabled = false;
+                addPiece(piece, 1);
 
                 //Chesspiece for player2
-                GameObject piece2 = GameObject.Instantiate(prefabPiece) as GameObject;; // Instantiate prefab
-                piece2.transform.SetParent(cardSave.cells[j, 7-i].transform);
-                piece2.transform.position = cardSave.cells[j, 7-i].transform.position;
+                GameObject piece2 = Helper.prefabNameToGameObject(type.ToString()); 
+                piece2.transform.SetParent(PieceConfig.cells[7-i, j].transform);
+                piece2.transform.position = PieceConfig.cells[7-i, j].transform.position;
                 piece2.GetComponent<ChessPiece>().player = 2;
-                piece2.GetComponent<ChessPiece>().chessPieceType = cardSave.pieces[i,j];
+                piece2.GetComponent<ChessPiece>().chessPieceType = type; 
                 piece2.GetComponent<ChessPiece>().indexX = j;
                 piece2.GetComponent<ChessPiece>().indexY = 7-i;
-                addPiece(piece2, cardSave.pieces[i,j], 2);
+                addPiece(piece2, 2);
             }
         }
     }
 
-    void addPiece(GameObject piece, cardSave.Piece pieceType, int player){
+    void addPiece(GameObject piece, int player){
 
-        Game_Manager player_data;
+        GameManager player_data;
 
         if (player == 1)
         {
-            player_data = Game_Manager.player1;
+            player_data = GameManager.player1;
         }
         else
         {
-            player_data = Game_Manager.player2;
+            player_data = GameManager.player2;
         }
         player_data.piecesOnBoard.Add(piece); 
     }

@@ -4,36 +4,34 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEditor;
-
+using Config;
 public class Archer : MonoBehaviour {
     public int offensePower = 1;
     public int defensePower = 1;
     public int attackRange = 4;
     public int numEnemy = 0;
     public bool onlyAttack = false;
-    public GameObject create_strikeDot(GameObject cell, GameObject enemy, GameObject card, GameObject parent) {
-        Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Prefab/Attacking.prefab", typeof(GameObject)); // Create Prefab
-        GameObject striking = GameObject.Instantiate(prefab) as GameObject; // Instantiate on Canvas
+    public GameObject createStrikeDot(GameObject cell, GameObject enemy, GameObject card, GameObject parent) {
+        GameObject striking = Helper.prefabNameToGameObject(Prefab.Arrow.ToString());
         striking.transform.SetParent(cell.transform, false); // Parent is Cell GameObject
         striking.transform.position = cell.transform.position;
-        striking.GetComponent<strikeController>().enemy = enemy;
-        striking.GetComponent<strikeController>().card = card;
-        striking.GetComponent<strikeController>().moveWhenAttack = false;
-        striking.GetComponent<strikeController>().parent = parent;
+        striking.GetComponent<ArrowController>().enemy = enemy;
+        striking.GetComponent<ArrowController>().card = card;
+        striking.GetComponent<ArrowController>().moveWhenAttack = false;
+        striking.GetComponent<ArrowController>().parent = parent;
         return striking;
     }
 
-    public GameObject create_moveDot(GameObject newCell, GameObject card) {
-        Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Prefab/dot_move.prefab", typeof(GameObject));
-        GameObject dot = GameObject.Instantiate(prefab) as GameObject;
-        dot.transform.SetParent(newCell.transform, false);
-        dot.transform.position = newCell.transform.position;
-        dot.GetComponent<dotController>().parent = gameObject; 
-        dot.GetComponent<dotController>().card = card;
-        return dot;
+    public GameObject createMoveDot(GameObject newCell, GameObject card) {
+        GameObject move = Helper.prefabNameToGameObject(Prefab.Dot_Move.ToString());
+        move.transform.SetParent(newCell.transform, false);
+        move.transform.position = newCell.transform.position;
+        move.GetComponent<DotController>().parent = gameObject; 
+        move.GetComponent<DotController>().card = card;
+        return move;
     }
 
-    public void createDots_Archer(List<int[]> move_list, GameObject card = null)
+    public void createArrowArcher(List<int[]> move_list, GameObject card = null, int num_attack = 1)
     {
         List<GameObject> dots = new List<GameObject>();
         for (int i = 0; i < 3; i++) {
@@ -49,13 +47,13 @@ public class Archer : MonoBehaviour {
                     continue;
                 }
 
-                GameObject newCell_Stirke = cardSave.cells[newX_strike, newY_strike ];
+                GameObject newCell_Stirke = PieceConfig.cells[newY_strike, newX_strike ];
                 if(newCell_Stirke.gameObject.transform.childCount > 0) {
                     //if(newCell_Stirke.gameObject.transform.GetChild(0).name == "dot_move(Clone)" ) continue;
                     
                     // The enemy's Piece is located within the range of archer's attack, then create a strike dot    
                     if(newCell_Stirke.transform.GetChild(0).GetComponent<ChessPiece>().player != GetComponent<ChessPiece>().player ) { 
-                        dots.Add(create_strikeDot(newCell_Stirke, newCell_Stirke.transform.GetChild(0).gameObject, card, this.gameObject));
+                        dots.Add(createStrikeDot(newCell_Stirke, newCell_Stirke.transform.GetChild(0).gameObject, card, this.gameObject));
                         numEnemy++;
                     }
 
@@ -65,14 +63,14 @@ public class Archer : MonoBehaviour {
                 }else if(!onlyAttack){
                     // If there is no blocking piece on the location where archer can move to
                     if(j==1){
-                        dots.Add(create_moveDot(newCell_Stirke, card));
+                        dots.Add(createMoveDot(newCell_Stirke, card));
                     }
                 }
             }
         }
-        strikeController.numAttack = System.Math.Min(2, numEnemy); 
+        ArrowController.numAttack = System.Math.Min(num_attack, numEnemy); 
         onlyAttack = false;
-        Game_Manager.dots = dots; 
+        GameManager.dots = dots; 
     }
 
 }

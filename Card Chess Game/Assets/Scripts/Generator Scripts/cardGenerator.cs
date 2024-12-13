@@ -4,111 +4,45 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-
+using Config;
 
 public class cardGenerator : MonoBehaviour
 {
-    // public List<int> cardList = new List<int>();
-    //public GameObject[] cards;
-    int numCard = 0;
+    public int player; 
     public static int result;
-
-
+    private int num_cards; 
+    GameObject card_base;
     void OnEnable()
     {
-        // result = PlayerPrefs.GetInt("result");
-        result = 1;
+        player = PlayerPrefs.GetInt("player");
+        result = PlayerPrefs.GetInt("result");
     }
 
     void Start()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            int km = 6;
-            int aa = 0;
-            int ma = 1;
-            Game_Manager.player1.deck.Add(km);
-            Game_Manager.player2.deck.Add(km);
-            Game_Manager.player1.deck.Add(aa);
-            Game_Manager.player2.deck.Add(aa);
-            Game_Manager.player1.deck.Add(ma);
-            Game_Manager.player2.deck.Add(ma);
+        card_base = GameObject.Find("Base");
+        int result = PlayerPrefs.GetInt("result");
+        if(player == 1 && result == (int)Constants.P1_First || player == 2 && result == (int)Constants.P2_First) {
+            num_cards = 3; 
+        } else {
+            num_cards = 4; 
         }
-
-        for (int i = 0; i < 6; i++)
-        {
-            int am = 3;
-            int mm = 4;
-            int wa = 2;
-            Game_Manager.player1.deck.Add(am);
-            Game_Manager.player1.deck.Add(mm);
-            Game_Manager.player1.deck.Add(wa);
-            Game_Manager.player2.deck.Add(am);
-            Game_Manager.player2.deck.Add(mm);
-            Game_Manager.player2.deck.Add(wa);
-        }
-
-        for (int i = 0; i < 12; i++)
-        {
-            int wm = 5;
-            Game_Manager.player1.deck.Add(wm);
-            Game_Manager.player2.deck.Add(wm);
-
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            createCard();
-        }
-
+        createCards(); 
     }
 
-    public void createCard()
+    public void createCards()
     {
-        // result가 0일때 선공
-        if (result == 0 && numCard >= 2) return;
-        // result가 1일때 후공
-        if (result == 1 && numCard >= 3) return;
-
-        int randomIndex = Random.Range(0, Game_Manager.player1.myDeckCount);
-        int randomCard = Game_Manager.player1.deck[randomIndex];
-        Game_Manager.player1.deck.RemoveAt(randomIndex);
-        Game_Manager.player1.myDeckCount--;
-        Object prefab = AssetDatabase.LoadAssetAtPath(cardSave.pathMulligan[randomCard], typeof(GameObject));
-        GameObject card = Instantiate(prefab) as GameObject;
-
-        dragAndDrop component = card.GetComponent<dragAndDrop>();
-        Game_Manager.player1.card_ingame.Add(randomCard);
-        component.cardType = randomCard;
-        component.handPos = numCard;
-
-        //if player1 is the second
-        if (result == 1)
-        {
-            if (numCard < 3)
-            {
-                if (numCard == 0)
-                {
-                    card.transform.position = new Vector3(1.6f, 8.5f, 0);
-                }
-                else if (numCard == 1)
-                {
-                    card.transform.position = new Vector3(4, 8.5f, 0);
-                }
-                else
-                {
-                    card.transform.position = new Vector3(6.5f, 8.5f, 0);
-                }
-                numCard++;
-            }
+        GameManager player = (this.player == 1) ? GameManager.player1 : GameManager.player2; 
+        for(int i = 0; i < num_cards; i++) {
+            Card card_drawn = player.drawCard(); 
+            GameObject card = Helper.prefabNameToGameObject(Prefab.Mulligan.ToString()); 
+            DragAndDrop component = card.GetComponent<DragAndDrop>();
+            card.transform.SetParent(card_base.transform, true);
+            component.init(card_drawn, this.player, i);
+            int center_x = 0; 
+            float displacement = 250f; 
+            card.transform.position = card_base.transform.position + new Vector3(center_x - ((num_cards-0.75f) / 2) * displacement + (i * displacement), 0, 0);
+        
         }
-        else
-        {
-            if (numCard < 2)
-            {
-                card.transform.position = new Vector3(2 + 4 * numCard, 8.5f, 0);
-                numCard++;
-            }
-        }
-
     }
 }

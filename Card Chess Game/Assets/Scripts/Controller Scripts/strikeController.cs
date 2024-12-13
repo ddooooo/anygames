@@ -3,26 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class strikeController : MonoBehaviour, IPointerDownHandler
+public class StrikeController : MonoBehaviour, IPointerDownHandler
 {
     public GameObject enemy;
     public GameObject card;
     public bool moveWhenAttack = true;
     public GameObject parent; 
-    public static int numAttack = default;
-    // Start is called before the first frame update
-    //public static int count = 0;
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void OnPointerDown(PointerEventData eventData) {
         deleteCard();
 
@@ -42,12 +28,9 @@ public class strikeController : MonoBehaviour, IPointerDownHandler
                     }
                 }
                 list.RemoveAt(index);
-                numAttack--;
                 Destroy(gameObject);
                 Destroy(enemy); 
-                if(parent.GetComponent<ChessPiece>().chessPieceType != cardSave.Piece.Archer) {
-                    moveParent();
-                }
+                moveParent();
             }
         }
 
@@ -55,32 +38,19 @@ public class strikeController : MonoBehaviour, IPointerDownHandler
             parent.GetComponent<ChessPiece>().offensePower--;
         }
 
-        if(numAttack == 0) {
-            Game_Manager.destroyAllIndicators();
-            Game_Manager.destroyAlldots();
-            // Switch turn after strike
-            endButtonController.switchTurn();
-            numAttack = 1;
-        }
+        GameManager.destroyAllIndicators();
+        GameManager.destroyAlldots();
+        // Switch turn after strike
+        GameManager.endTurn();
         
     }
-
-    public bool deleteCard()
+    public void deleteCard()
     {
-        if(card) {
-            dragDrop temp = card.GetComponent<dragDrop>(); 
-            List<GameObject> list = temp.player_data.cards_in_hand;
-            int index = -1;
-            for (int i=0; i<list.Count; i++) {
-                if(card == list[i]){
-                    index = i;
-                    break;
-                }
-            }
-            temp.player_data.cards_in_hand.RemoveAt(index);
-            Destroy(card); 
+        if (card) {
+            int hand_index = card.GetComponent<DragDrop>().hand_index;
+            card.GetComponent<DragDrop>().player_data.hand.RemoveAt(hand_index);
+            Destroy(card);
         }
-        return true; 
     }
 
     public void moveParent(){
@@ -88,7 +58,7 @@ public class strikeController : MonoBehaviour, IPointerDownHandler
 
             parent.transform.SetParent(cellTransform); // selected piece의 부모는 selected piece가 이동할 cell
             parent.transform.position = cellTransform.position; // 위치 조정
-            parent.GetComponent<ChessPiece>().indexX = cellTransform.gameObject.GetComponent<cellController>().indexX;
-            parent.GetComponent<ChessPiece>().indexY = cellTransform.gameObject.GetComponent<cellController>().indexY;      
+            parent.GetComponent<ChessPiece>().indexX = cellTransform.gameObject.GetComponent<CellController>().indexX;
+            parent.GetComponent<ChessPiece>().indexY = cellTransform.gameObject.GetComponent<CellController>().indexY;      
     }
 }

@@ -2,43 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class WheelController : MonoBehaviour
+using UnityEngine.EventSystems;
+using static UnityEngine.Debug;
+using Config;
+public class WheelController : MonoBehaviour, IPointerDownHandler
 {
-    float rotSpeed;
-    int num = 0;
+    float rot_speed;
     bool clicked = false;
+    float decay_factor = 0;
     void Start() {
 
     }
     void Update()
     {
-        if(Input.GetMouseButtonDown(0) && num == 0) {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-            if(hit.collider != null) {
-                if(hit.transform.name == "wheel") {;
-                    rotSpeed = Random.Range(30.0f, 50.0f);
-                    num++;
-                    clicked = true;
-                }
-            }
-        }
-        transform.Rotate(0, 0, this.rotSpeed);
-        this.rotSpeed *= Random.Range(0.9f, 0.97f);
+        transform.Rotate(0, 0, this.rot_speed);
+        this.rot_speed *= decay_factor;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Log("clicked!");
+        if(clicked) return; 
+        decay_factor = Random.Range(0.9942f, 0.9943f);
+        rot_speed = Random.Range(3.0f, 3.15f);
+        clicked = true;
     }
 
     public int result() {
-        if(transform.eulerAngles.z >= 0 && transform.eulerAngles.z <= 180) {
-            return 0;
+        if(transform.eulerAngles.z <= 180) {
+            return (int) Constants.P1_First;
         }else {
-            return 1;
+            return (int) Constants.P2_First;
         }
     }
 
     public bool finish() {
-        if(rotSpeed <= 0.07f && clicked) {
-            rotSpeed = 0;
+        if(rot_speed <= 0.07f && clicked) {
+            rot_speed = 0;
             return true;
         }
         return false;

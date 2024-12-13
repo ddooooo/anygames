@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class cellController : MonoBehaviour
+public class CellController : MonoBehaviour
 {
     public int indexX;
     public int indexY;
